@@ -45,7 +45,7 @@ spec:
         - name: APP_PORT
           value: "8109"
         - name: APP_HOME
-          value: "order-workflow\CacheInspector"
+          value: "order-workflow/CacheInspector"
         - name: APP_STARTUP
           value: "CacheInspector.js"
         - name: REDIS_HOST

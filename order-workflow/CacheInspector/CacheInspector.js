@@ -72,6 +72,8 @@ app.post('/cacheEntry', function (req, res) {
  console.log('body in request' + JSON.stringify(req.body));
  console.log("content type " + req.headers['content-type']);
  var key = req.body.key;
+ localLoggerAPI.log(`Put Cache Entry in cache with key  ${key}`
+ , APP_NAME, "info")
  var document = req.body.document;
  localCacheAPI.putInCache(key, document,
   function (result) {

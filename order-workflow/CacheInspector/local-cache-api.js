@@ -50,7 +50,7 @@ localCacheAPI.putInCache = function (key, value, callback) {
             , APP_NAME, "info")
 
         redisClient.set(key, JSON.stringify(value));
-        callback("Put in cache");
+        callback("Put in cache"+  JSON.stringify(value)+" under key "+key+" in redishost "+redisHost+" port "+redisPort);
     } catch (e) {
         localLoggerAPI.log(`Failed to put document in cache with  ${key} resulting in exception ${e}`
             , APP_NAME, "error")
