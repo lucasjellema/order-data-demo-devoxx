@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: checkordertotal-ms
+  labels:
+    app: checkordertotal-ms
+spec:
+  nodeName: minikube
+  containers:
+  - name: checkordertotal
+    # get latest version of image
+    image: lucasjellema/node-app-runner
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: GIT_URL
+      value: "https://github.com/lucasjellema/order-data-demo-devoxx"
+    - name: APP_PORT
+      value: "8102"
+    - name: APP_HOME
+      value: "order-workflow/CheckOrderTotal"
+    - name: APP_STARTUP
+      value: "CheckOrderTotal.js"
+    - name: KAFKA_HOST
+      value: "192.168.188.102"
+    - name: ZOOKEEPER_PORT
+      value: "2181"
+    - name: KAFKA_TOPIC
+      value: "workflowEvents"
+    - name: REDIS_HOST
+      value: "redis-cache"
+    - name: REDIS_PORT
+      value: "6379"
+    ports:
+    # containerPort is the port exposed by the container (where nodejs express api is listening)
+    - containerPort: 8102
