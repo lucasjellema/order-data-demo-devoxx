@@ -1,26 +1,280 @@
 {
 	"info": {
-		"name": "MicroServiceTestSet",
-		"_postman_id": "d6665219-6f93-12a2-6fbb-ff1e0eabf1ad",
+		"name": "Orders-Data-Application-Devoxx-Morocco",
+		"_postman_id": "17151513-6862-da35-b114-4a94e5ba4df1",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Retrieve CacheEntry from Kubernetes",
+			"name": "Test About operation of Order MS",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"body": {},
 				"url": {
-					"raw": "192.168.99.100:30127/cacheEntry?key=OracleCodeTweetProcessor1496754144760",
+					"raw": "https://orderms-a516817.apaas.us2.oraclecloud.com/order-api/about",
+					"protocol": "https",
 					"host": [
-						"192",
-						"168",
-						"99",
-						"100"
+						"orderms-a516817",
+						"apaas",
+						"us2",
+						"oraclecloud",
+						"com"
 					],
-					"port": "30127",
+					"path": [
+						"order-api",
+						"about"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders through Order MS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{ORDER-MS-ENDPOINT}}/order-api/orders",
+					"host": [
+						"{{ORDER-MS-ENDPOINT}}"
+					],
+					"path": [
+						"order-api",
+						"orders"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test About Shoppingcart microservice",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test About Cache API Shoppingcart microservice",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cache-api/about",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cache-api",
+						"about"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test Put In Cache through Cache API Shoppingcart microservice",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"someKey\" :\"someValue\"}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cache-api/cacheKey",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cache-api",
+						"cacheKey"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ShoppingCart: Test Get from Cache through Cache API Shoppingcart microservice",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"someKey\" :\"someValue\"}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cache-api/cacheKey",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cache-api",
+						"cacheKey"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ShoppingCart: create shopping cart Shoppingcart microservice",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerId\" :\"6172\"\n, \"customerName\" : \"John Doe\"\n, \"shippingDestination\" : \"Russia\"\n, \"items\" : [ { \"productId\" : \"8128\"\n              , \"productName\" : \"football\"\n              , \"quantity\" : 34 \n              , \"total\" : 4390.12 \n}\n]\n\t\n}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cart",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cart"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ShoppingCart: update shopping cart Shoppingcart microservice",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerId\" :\"6172\"\n, \"customerName\" : \"John Doe\"\n, \"shippingDestination\" : \"Russia\"\n, \"items\" : [ { \"productId\" : \"8128\"\n              , \"productName\" : \"football\"\n              , \"quantity\" : 38 \n              , \"total\" : 5790.12 \n}\n]\n}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cart/7da30c85-ea77-4f0f-8465-4a935b505a87",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cart",
+						"7da30c85-ea77-4f0f-8465-4a935b505a87"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ShoppingCart: check out shopping cart Shoppingcart microservice",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerId\" :\"6172\"\n, \"customerName\" : \"John Doe\"\n, \"shippingDestination\" : \"Russia\"\n, \"items\" : [ { \"productId\" : \"8128\"\n              , \"productName\" : \"football\"\n              , \"quantity\" : 38 \n              , \"total\" : 5790.12 \n}\n]\n}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cart-checkout/7da30c85-ea77-4f0f-8465-4a935b505a87",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cart-checkout",
+						"7da30c85-ea77-4f0f-8465-4a935b505a87"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Submit new Order through Order MS",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerId\" :\"6172\"\n, \"customerName\" : \"John Doe\"\n, \"shippingDestination\" : \"Russia\"\n, \"items\" : [ { \"productId\" : \"8128\"\n              , \"productName\" : \"football\"\n              , \"quantity\" : 38 \n              , \"total\" : 5790.12 \n}\n]\n}"
+				},
+				"url": {
+					"raw": "{{ORDER-MS-ENDPOINT}}/order-api/orders",
+					"host": [
+						"{{ORDER-MS-ENDPOINT}}"
+					],
+					"path": [
+						"order-api",
+						"orders"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Put  CacheEntry to Kubernetes",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"key\":\"b\"\n,\"document\":{\"a\":\"domdomd\", \"b:\":918}\t\n\t\n}"
+				},
+				"url": {
+					"raw": "http://{{ClusterIP}}:{{CachePort}}/cacheEntry?key=OracleCodeTweetProcessor1496754144760",
+					"protocol": "http",
+					"host": [
+						"{{ClusterIP}}"
+					],
+					"port": "{{CachePort}}",
 					"path": [
 						"cacheEntry"
 					],
@@ -37,354 +291,27 @@
 			"response": []
 		},
 		{
-			"name": "ValidateTweet",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"text\":\"Trump Local Tweet  #oraclecode Tweet @StringSection @redCopper\" \r\n, \"author\" : \"lucasjellema\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"April 17, 2017 at 01:39PM\"\r\n, \"tweetURL\" : \"http://twitter.com/SaibotAirport/status/853935915714138112\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
-				},
-				"url": {
-					"raw": "{{clusterIP}}:{{validateTweetPort}}/tweet",
-					"host": [
-						"{{clusterIP}}"
-					],
-					"port": "{{validateTweetPort}}",
-					"path": [
-						"tweet"
-					]
-				},
-				"description": "Calls to microservices"
-			},
-			"response": []
-		},
-		{
-			"name": "Publish Valid Tweet 2",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"text\":\"Interesting workshop on Microservices, Kubernetes and Apache Kafka\" \r\n, \"author\" : \"memyselfandI\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"June 1, 2017 at 7:18PM\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
-				},
-				"url": {
-					"raw": "{{clusterIP}}:{{receiveTweetPort}}/tweet",
-					"host": [
-						"{{clusterIP}}"
-					],
-					"port": "{{receiveTweetPort}}",
-					"path": [
-						"tweet"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Publish Fake Tweet to TweetCollector",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"text\":\"Nr 42 32 Great, the greatest, fake,the fakest\" \r\n, \"author\" : \"lucasjellema\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"June 5, 2017 at 09:01PM\"\r\n, \"tweetURL\" : \"http://twitter.com/SaibotAirport/status/853935915714138112\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
-				},
-				"url": {
-					"raw": "129.144.150.140:8005/tweet",
-					"host": [
-						"129",
-						"144",
-						"150",
-						"140"
-					],
-					"port": "8005",
-					"path": [
-						"tweet"
-					]
-				},
-				"description": "Publish to TweetCollector running on Oracle Container Cloud"
-			},
-			"response": []
-		},
-		{
-			"name": "Enrich Tweet",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"text\":\"Nr 19 - Enricher Test Great, the greatest, fake,the fakest\" \r\n, \"author\" : \"lucasjellema\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"April 17, 2017 at 01:39PM\"\r\n, \"tweetURL\" : \"http://twitter.com/SaibotAirport/status/853935915714138112\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
-				},
-				"url": {
-					"raw": "192.168.99.100:30649/tweet",
-					"host": [
-						"192",
-						"168",
-						"99",
-						"100"
-					],
-					"port": "30649",
-					"path": [
-						"tweet"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Publish Invalid Tweet 4",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"text\":\"Champions League Final on Saturday. Juve has to work very hard to dominate Real Madrid\" \r\n, \"author\" : \"johndoe\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"June 1, 2017 at 7:20PM\"\r\n, \"firstLinkFromTweet\" : \"https://en.wikipedia.org/wiki/Juventus_F.C.\"\r\n}"
-				},
-				"url": {
-					"raw": "{{clusterIP}}:{{receiveTweetPort}}/tweet",
-					"host": [
-						"{{clusterIP}}"
-					],
-					"port": "{{receiveTweetPort}}",
-					"path": [
-						"tweet"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Get TweetBoard (locally)",
+			"name": "Retrieve CacheEntry from Kubernetes",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"body": {},
 				"url": {
-					"raw": "127.0.0.1:8096/tweetBoard",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8096",
-					"path": [
-						"tweetBoard"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Publish Fake Tweet",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"text\":\"Nr 24 Great, the greatest, fake,the fakest\" \r\n, \"author\" : \"lucasjellema\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"April 17, 2017 at 01:39PM\"\r\n, \"tweetURL\" : \"http://twitter.com/SaibotAirport/status/853935915714138112\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
-				},
-				"url": {
-					"raw": "{{clusterIP}}:{{receiveTweetPort}}/tweet",
-					"host": [
-						"{{clusterIP}}"
-					],
-					"port": "{{receiveTweetPort}}",
-					"path": [
-						"tweet"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Publish Valid Tweet 3",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"text\":\"Interesting workshop on Microservices, Kubernetes and Apache Kafka\" \r\n, \"author\" : \"memyselfandI\"\r\n, \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n, \"createdTime\" : \"June 1, 2017 at 7:18PM\"\r\n, \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n}"
-				},
-				"url": {
-					"raw": "{{clusterIP}}:{{receiveTweetPort}}/tweet",
-					"host": [
-						"{{clusterIP}}"
-					],
-					"port": "{{receiveTweetPort}}",
-					"path": [
-						"tweet"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Get TweetBoard",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "192.168.99.100:31841/tweetBoard",
-					"host": [
-						"192",
-						"168",
-						"99",
-						"100"
-					],
-					"port": "31841",
-					"path": [
-						"tweetBoard"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Log Monitor",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "http://192.168.99.100:30420/logs",
+					"raw": "http://{{ClusterIP}}:{{CachePort}}/cacheEntry?key=b",
 					"protocol": "http",
 					"host": [
-						"192",
-						"168",
-						"99",
-						"100"
+						"{{ClusterIP}}"
 					],
-					"port": "30420",
-					"path": [
-						"logs"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Get tweets from Tweet Collector",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "129.144.150.140:8005/tweets",
-					"host": [
-						"129",
-						"144",
-						"150",
-						"140"
-					],
-					"port": "8005",
-					"path": [
-						"tweets"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Retrieve CacheEntry (Locally)",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "127.0.0.1:8097/cacheEntry?key=OracleCodeTweetProcessor1496230025295",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8097",
+					"port": "{{CachePort}}",
 					"path": [
 						"cacheEntry"
 					],
 					"query": [
 						{
 							"key": "key",
-							"value": "OracleCodeTweetProcessor1496230025295"
+							"value": "b",
+							"equals": true
 						}
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Publish Fake Tweet (local)",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{ \"text\":\"Great, the greatest, fake,the fakest\" \r\n             , \"author\" : \"lucasjellema\"\r\n             , \"authorImageUrl\" : \"http://pbs.twimg.com/profile_images/427673149144977408/7JoCiz-5_normal.png\"\r\n             , \"createdTime\" : \"April 17, 2017 at 01:39PM\"\r\n             , \"tweetURL\" : \"http://twitter.com/SaibotAirport/status/853935915714138112\"\r\n             , \"firstLinkFromTweet\" : \"https://t.co/cBZNgqKk0U\"\r\n             }"
-				},
-				"url": {
-					"raw": "127.0.0.1:8095/tweet",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8095",
-					"path": [
-						"tweet"
 					]
 				},
 				"description": ""

@@ -46,6 +46,10 @@ spec:
           value: "8109"
         - name: APP_HOME
           value: "order-workflow/CacheInspector"
+        - name: KAFKA_HOST
+          value: "192.168.188.102"
+        - name: ZOOKEEPER_PORT
+          value: "2181"
         - name: APP_STARTUP
           value: "CacheInspector.js"
         - name: REDIS_HOST
