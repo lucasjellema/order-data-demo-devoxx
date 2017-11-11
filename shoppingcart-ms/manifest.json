@@ -1,0 +1,9 @@
+{
+  "runtime":{
+    "majorVersion":"8"
+  },
+  "command": "node shoppingcart-ms.js",
+  "release": {},
+  "notes": "A REST API for creating, updating and checking out a shopping cart"
+}
+

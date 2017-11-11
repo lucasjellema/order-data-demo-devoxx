@@ -1,0 +1,22 @@
+{
+  "name": "artist-enricher-api",
+  "version": "0.0.1",
+  "description": "A REST API (GET requests) to retrieve rich information about a muscial artist: e.g. http://host:port/artists/get?artist=the+beatles",
+  "main": "shoppingcart-ms.js",
+  "scripts": {
+    "start": "sudo nodejs shoppingcart-ms.js",
+    "monitor": "nodemon shoppingcart-ms.js"
+  },
+  "author": "Lucas Jellema",
+  "license": "Apache Version 2.0",
+  "dependencies": {
+    "async": ">=1.5.2",
+    "body-parser": "^1.16.1",
+    "request": "^2.81.0",
+    "kafka-node": "^2.1.0",
+    "express": "~4.13.4"
+  },
+  "engines": {
+    "node": ">=0.12.7"
+  }
+}
