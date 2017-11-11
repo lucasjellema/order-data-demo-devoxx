@@ -1,0 +1,14 @@
+{
+  "name": "eventhub-node-client",
+  "version": "1.0.0",
+  "description": "Node client program to interact with Oracle Event Hub Cloud Service",
+  "main": "consume.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "kafka-node": "^2.2.0"
+  }
+}

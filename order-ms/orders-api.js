@@ -11,7 +11,7 @@ eventBusListener = require("./EventListener.js");
 dateFormat = require('dateformat');
 // not available locally, only on ACCS 
 
-//var oracledb = require('oracledb');
+var oracledb = require('oracledb');
 
 var utils = require("./proxy-utils.js");
 var settings = require("./proxy-settings.js");
@@ -27,6 +27,17 @@ console.log(`eventhubConnectstring read from ACC = ${eventhubConnectstring}`)
 var ordersAPI = module.exports;
 var apiURL = "/order-api";
 
+eventBusListener.subscribeToEvents(
+  (message) => {
+    console.log("Received event from event hub");
+    try {
+    var orderEvent = JSON.parse(message);
+    console.log("Order Event payload " + JSON.stringify(orderEvent));
+    } catch (err) {
+      console.log("Parsing event failed "+err);
+    }
+  }
+);
 
 ordersAPI.registerListeners =
   function (app) {
@@ -36,8 +47,8 @@ ordersAPI.registerListeners =
     app.get(apiURL + '/about', function (req, res) {
       handleAbout(req, res);
     });
-    console.log("Register listeners for orders-api: GET "+apiURL + '/orders');
-    
+    console.log("Register listeners for orders-api: GET " + apiURL + '/orders');
+
     app.get(apiURL + '/orders', function (req, res) {
       handleGetOrders(req, res);
     });
@@ -45,7 +56,7 @@ ordersAPI.registerListeners =
       handleGetOrder(req, res);
     });
     app.post(apiURL + '/*', function (req, res) {
-      ordersAPI.handlePost(req, res);
+      handlePost(req, res);
     });
 
 
@@ -81,7 +92,8 @@ handlePost =
           console.log("back from insert with result " + rslt);
 
           eventBusPublisher.publishEvent("NewOrderEvent", {
-            "order": order
+            "eventType": "NewOrder"
+            ,"order": order
             , "module": "order.microservice"
             , "timestamp": Date.now()
           }, topicName);
@@ -101,7 +113,7 @@ handlePost =
     }
   }//ordersAPI.handlePost
 
-  ordersAPI.handleGet = function (req, res) {
+ordersAPI.handleGet = function (req, res) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
   res.write("orders-API - Version " + APP_VERSION + ". No Data Requested, so none is returned; try /orders or /presidentialElection or something else");
   res.write("Supported URLs:");
@@ -209,13 +221,13 @@ insertOrderIntoDatabase = function (order, req, res, callback) {
   console.log('insertOrderIntoDatabase');
   handleDatabaseOperation(req, res, function (request, response, connection) {
 
-    var bindvars = [order.id, order.status, order.customer_id, order.customer_name, order.shipping_destination];
+    var bindvars = [order.id, order.status, order.customerId, order.customerName, order.shippingDestination];
 
-    var insertStatement = `INSERT INTO orders (id, status, customer_id,customer_name,shipping_destination) 
+    var insertStatement = `INSERT INTO dvx_orders (id, status, customer_id,customer_name,shipping_destination) 
                           VALUES (:id, :status,  :customer_id,:customer_name,:shipping_destination)`
       ;
     console.log('do insertStatement ' + insertStatement);
-    console.log('bind vars' + JSON, stringify(bindvars));
+    console.log('bind vars' + JSON.stringify(bindvars));
     connection.execute(insertStatement, bindvars, function (err, result) {
       if (err) {
         console.error('error in insertOrderIntoDatabase ' + err.message);
@@ -225,8 +237,16 @@ insertOrderIntoDatabase = function (order, req, res, callback) {
       else {
         console.log("Rows inserted: " + result.rowsAffected);
         console.log('return result ' + JSON.stringify(result));
-        doRelease(connection);
-        callback(request, response, order, { "summary": "Insert succeeded", "details": result });
+        //TODO loop over items and commit each of the items
+
+        connection.commit(function (error) {
+          console.log(`After commit - error = ${error}`);
+          doRelease(connection);
+          callback(request, response, order, { "summary": "Insert succeeded", "details": result });
+
+
+        });
+
       }//else
     }); //callback for handleDatabaseOperation
   });//handleDatabaseOperation

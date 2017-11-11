@@ -1,0 +1,258 @@
+{
+	"info": {
+		"name": "Orders-Data-Application-Devoxx-Morocco",
+		"_postman_id": "17151513-6862-da35-b114-4a94e5ba4df1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Test About operation of Order MS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://orderms-a516817.apaas.us2.oraclecloud.com/order-api/about",
+					"protocol": "https",
+					"host": [
+						"orderms-a516817",
+						"apaas",
+						"us2",
+						"oraclecloud",
+						"com"
+					],
+					"path": [
+						"order-api",
+						"about"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders through Order MS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{ORDER-MS-ENDPOINT}}/order-api/orders",
+					"host": [
+						"{{ORDER-MS-ENDPOINT}}"
+					],
+					"path": [
+						"order-api",
+						"orders"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test About Shoppingcart microservice",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test About Cache API Shoppingcart microservice",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cache-api/about",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cache-api",
+						"about"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test Put In Cache through Cache API Shoppingcart microservice",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"someKey\" :\"someValue\"}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cache-api/cacheKey",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cache-api",
+						"cacheKey"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ShoppingCart: Test Get from Cache through Cache API Shoppingcart microservice",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"someKey\" :\"someValue\"}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cache-api/cacheKey",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cache-api",
+						"cacheKey"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ShoppingCart: create shopping cart Shoppingcart microservice",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerId\" :\"6172\"\n, \"customerName\" : \"John Doe\"\n, \"shippingDestination\" : \"Russia\"\n, \"items\" : [ { \"productId\" : \"8128\"\n              , \"productName\" : \"football\"\n              , \"quantity\" : 34 \n              , \"total\" : 4390.12 \n}\n]\n\t\n}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cart",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cart"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ShoppingCart: update shopping cart Shoppingcart microservice",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerId\" :\"6172\"\n, \"customerName\" : \"John Doe\"\n, \"shippingDestination\" : \"Russia\"\n, \"items\" : [ { \"productId\" : \"8128\"\n              , \"productName\" : \"football\"\n              , \"quantity\" : 38 \n              , \"total\" : 5790.12 \n}\n]\n}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cart/7da30c85-ea77-4f0f-8465-4a935b505a87",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cart",
+						"7da30c85-ea77-4f0f-8465-4a935b505a87"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ShoppingCart: check out shopping cart Shoppingcart microservice",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerId\" :\"6172\"\n, \"customerName\" : \"John Doe\"\n, \"shippingDestination\" : \"Russia\"\n, \"items\" : [ { \"productId\" : \"8128\"\n              , \"productName\" : \"football\"\n              , \"quantity\" : 38 \n              , \"total\" : 5790.12 \n}\n]\n}"
+				},
+				"url": {
+					"raw": "{{SHOPPINGCART-MS-ENDPOINT}}/cart-checkout/7da30c85-ea77-4f0f-8465-4a935b505a87",
+					"host": [
+						"{{SHOPPINGCART-MS-ENDPOINT}}"
+					],
+					"path": [
+						"cart-checkout",
+						"7da30c85-ea77-4f0f-8465-4a935b505a87"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Submit new Order through Order MS",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"customerId\" :\"6172\"\n, \"customerName\" : \"John Doe\"\n, \"shippingDestination\" : \"Russia\"\n, \"items\" : [ { \"productId\" : \"8128\"\n              , \"productName\" : \"football\"\n              , \"quantity\" : 38 \n              , \"total\" : 5790.12 \n}\n]\n}"
+				},
+				"url": {
+					"raw": "{{ORDER-MS-ENDPOINT}}/order-api/orders",
+					"host": [
+						"{{ORDER-MS-ENDPOINT}}"
+					],
+					"path": [
+						"order-api",
+						"orders"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

@@ -25,7 +25,7 @@ var EVENT_HUB_PUBLIC_IP = '129.150.77.116';
 
 var consumerOptions = {
     host: EVENT_HUB_PUBLIC_IP + ':' + KAFKA_ZK_SERVER_PORT,
-    groupId: 'consume-order-events-for-devoxx-app',
+    groupId: 'consume-events-from-event-hub-for-devoxx-app',
     sessionTimeout: 15000,
     protocol: ['roundrobin'],
     fromOffset: 'earliest' // equivalent of auto.offset.reset valid values are 'none', 'latest', 'earliest'
