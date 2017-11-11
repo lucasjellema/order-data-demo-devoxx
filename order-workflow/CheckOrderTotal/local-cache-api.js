@@ -15,7 +15,7 @@ var redisPort = process.env.REDIS_PORT || 30159;
 var cacheInspectorServiceHost = "192.168.99.100";
 var cacheInspectorServicePort = "30159";
 
-var callViaAPI = true;
+var callViaAPI = false;
 
 var redisClient;
 
