@@ -89,7 +89,7 @@ function handleWorkflowEvent(eventMessage) {
 
   if (event.actions) {
     var acted = false;
-    for (i = 0; i < event.actions.length; i++) {
+    for (var i = 0; i < event.actions.length; i++) {
       var action = event.actions[i];
       // find action of type CheckShipping
       if ("CheckShipping" == action.type) {
