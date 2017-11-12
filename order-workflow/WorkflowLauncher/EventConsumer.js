@@ -14,7 +14,7 @@ var APP_NAME = "EventBusConsumer"
 
 var consumerOptions = {
   host: kafkaHost + ':' + zookeeperPort,
-  groupId: 'consume-newtweets-for-workflowlauncher',
+  groupId: 'consume-orders-for-workflowlauncher',
   sessionTimeout: 15000,
   protocol: ['roundrobin'],
   fromOffset: 'earliest' // equivalent of auto.offset.reset valid values are 'none', 'latest', 'earliest'

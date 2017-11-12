@@ -64,7 +64,7 @@ function checkShipping(order) {
   console.log("check shiping" + JSON.stringify(order));
   if (order.shippingDestination == 'Amsterdam') {
     valid = false;
-    reason = "Not OK because: because of complex and tax related consideration, we are not allowed to accept orders that result in shipping to Amsterdam";
+    reason = "Not OK because: of complex and tax related consideration, we are not allowed to accept orders that result in shipping to Amsterdam";
   }
 
   if (!valid) {

@@ -85,53 +85,78 @@ function handleWorkflowEvent(eventMessage) {
 }// handleWorkflowEvent
 
 var defaultWorkflowTemplate =
-  {
-    "workflowType": "devoxx-order-processor"
-    , "workflowVersion": "0.9"
-    , "creator": "WorkflowLauncher"
-    , "actions":
-    [{
-      "id": "CheckShippingDestination"
-      , "type": "CheckShipping"
-      , "status": "new"  // new, inprogress, complete, failed
-      , "result": "" // for example OK, 0, 42, true
-      , "conditions": [] // a condition can be {"action":"<id of a step in the routingslip>", "status":"complete","result":"OK"}; note: the implicit condition for this step is that its own status = new   
-    }
-      , {
-      "id": "CheckOrderTotal"
-      , "type": "CheckOrderTotal"
-      , "status": "new"  // new, inprogress, complete, failed
-      , "result": "" // for example OK, 0, 42, true
-      , "conditions": []
-    }
-      , {
-      "id": "OrderApprover"
-      , "type": "OrderVerdict"
-      , "status": "new"  // new, inprogress, complete, failed
-      , "result": "" // for example OK, 0, 42, true
-      , "conditions": [{ "action": "CheckOrderTotal", "status": "complete", "result": "OK" }
-                       , { "action": "CheckShippingDestination", "status": "complete", "result": "OK" }
-                      ]
-    }
-    , {
-      "id": "OrderTotalRejector"
-      , "type": "OrderVerdict"
-      , "status": "new"  // new, inprogress, complete, failed
-      , "result": "" // for example OK, 0, 42, true
-      , "conditions": [{ "action": "CheckOrderTotal", "status": "complete", "result": "NOK" }]
-    }
-    , {
-      "id": "OrderShippingRejector"
-      , "type": "OrderVerdict"
-      , "status": "new"  // new, inprogress, complete, failed
-      , "result": "" // for example OK, 0, 42, true
-      , "conditions": [{ "action": "CheckShippingDestination", "status": "complete", "result": "NOK" }]
-    }
-    ]
-    , "audit": [
-      { "when": new Date().getTime(), "who": "WorkflowLauncher", "what": "creation", "comment": "initial creation of workflow" }
-    ]
-    , "payload": {
-    }
-  };
+{
+  "workflowType": "devoxx-order-processor",
+  "workflowVersion": "0.9",
+  "creator": "WorkflowLauncher",
+  "actions": [
+      {
+          "id": "CheckShippingDestination",
+          "type": "CheckShipping",
+          "status": "new",
+          "result": "",
+          "conditions": []
+      },
+      {
+          "id": "CheckOrderTotal",
+          "type": "CheckOrderTotal",
+          "status": "new",
+          "result": "",
+          "conditions": []
+      },
+      {
+          "id": "OrderApprover",
+          "type": "OrderVerdict",
+          "status": "new",
+          "result": "",
+          "conditions": [
+              {
+                  "action": "CheckOrderTotal",
+                  "status": "complete",
+                  "result": "OK"
+              },
+              {
+                  "action": "CheckShippingDestination",
+                  "status": "complete",
+                  "result": "OK"
+              }
+          ]
+      },
+      {
+          "id": "OrderTotalRejector",
+          "type": "OrderVerdict",
+          "status": "new",
+          "result": "",
+          "conditions": [
+              {
+                  "action": "CheckOrderTotal",
+                  "status": "complete",
+                  "result": "NOK"
+              }
+          ]
+      },
+      {
+          "id": "OrderShippingRejector",
+          "type": "OrderVerdict",
+          "status": "new",
+          "result": "",
+          "conditions": [
+              {
+                  "action": "CheckShippingDestination",
+                  "status": "complete",
+                  "result": "NOK"
+              }
+          ]
+      }
+  ],
+  "audit": [
+      {
+          "when": 1,
+          "who": "WorkflowLauncher",
+          "what": "creation",
+          "comment": "initial creation of workflow"
+      }
+  ],
+  "payload": {}
+};
 

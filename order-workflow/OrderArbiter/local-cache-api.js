@@ -46,7 +46,15 @@ if (callViaAPI) {
             res.on("end", function () {
                 var body = Buffer.concat(chunks);
                 console.log(body.toString());
-                callback(JSON.parse(body));
+                try {
+                    var obj = JSON.parse(body);
+                    callback(obj);
+                }
+                catch (err) {
+                    console.log("failed parsing cache result under key " + key + " : " + err)
+                    console.log("failed parsing cache result: " + err)
+                    callback({});
+                }
             });
         });
 
@@ -62,7 +70,16 @@ if (callViaAPI) {
                 console.error('ERROR in getting document from cache ' + err);
                 callback(null);
             } else {
-                callback(JSON.parse(reply));
+                try {
+                    var obj = JSON.parse(reply);
+                    callback(obj);
+                }
+                catch (err) {
+                    console.log("failed parsing cache result under key " + key + " : " + err)
+                    console.log("failed parsing cache result: " + err)
+                    callback({});
+                }
+
             }//else
         });//get
     } catch (e) {

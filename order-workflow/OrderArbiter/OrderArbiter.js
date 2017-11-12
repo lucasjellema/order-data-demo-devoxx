@@ -41,29 +41,6 @@ app.get('/ping', function (req, res) {
   res.end();
 });
 
-function judgeOrder(order) {
-  var outcome = {};
-  outcome.result = "OK";
-  outcome.motivation = "judged";
-  var valid = true;
-  var reason = "Not OK because:";
-
-  // publish the OrderApproved or OrderRejected event
-    event = {};
-    event.eventType = 'OrderApproved';
-    event.order = order;
-    
-    // publish event
-      eventBusPublisher.publishEvent('OrderApproved' + event.updateTimeStamp, event, workflowEventsTopic);
-    
-
-
-  if (!valid) {
-    outcome.result = "NOK";
-    outcome.motivation = reason;
-  }
-  return outcome;
-}
 
 // configure Kafka interaction
 eventBusConsumer.registerEventHandler(workflowEventsTopic, handleWorkflowEvent);
@@ -80,7 +57,7 @@ function handleWorkflowEvent(eventMessage) {
 
   if (event.actions) {
     var acted = false;
-    for (i = 0; i < event.actions.length; i++) {
+    for (var i = 0; i < event.actions.length; i++) {
       var action = event.actions[i];
       // find action of type CheckShipping
       if ("OrderVerdict" == action.type) {
@@ -92,15 +69,38 @@ function handleWorkflowEvent(eventMessage) {
             var workflowDocument = document;
             // this happens  asynchronously; right now we do not actually use the retrieved document. It does work.       
           });
-          // if satisfied, then validate tweet
-          var outcome = judgeOrder(event.payload);
+          // if satisfied, then arbitrate order
+          var outcome = {};
+          outcome.result = "OK";
+          outcome.motivation = "judged";
+
+          if (action.id == "OrderTotalRejector" || action.id == "OrderShippingRejector") {
+            // publish the OrderApproved or OrderRejected event
+            oevent = {};
+            oevent.eventType = 'OrderRejected';
+            oevent.order = event.payload;
+            // publish event
+            eventBusPublisher.publishEvent('OrderRejected' + event.updateTimeStamp, oevent, workflowEventsTopic);
+            outcome.motivation = 'OrderRejected';
+            outcome.result ='NOK'
+          }
+          if (action.id == "OrderApprover") {
+            // publish the OrderApproved or OrderRejected event
+            oevent = {};
+            oevent.eventType = 'OrderApproved';
+            oevent.order = event.payload;
+            // publish event
+            eventBusPublisher.publishEvent('OrderApproved' + event.updateTimeStamp, oevent, workflowEventsTopic);
+            outcome.motivation = 'OrderApproved';
+            outcome.result='OK'
+          }
 
           // update action in event
           action.status = 'complete';
           action.result = outcome.result;
           // add audit line
           event.audit.push(
-            { "when": new Date().getTime(), "who": "JudgeOrder", "what": "update", "comment": "Order Judgement Complete" }
+            { "when": new Date().getTime(), "who": "JudgeOrder", "what": "update", "comment": "Order Judgement Complete: "+JSON.stringify(outcome) }
           );
 
           acted = true;
@@ -137,6 +137,7 @@ function handleWorkflowEvent(eventMessage) {
 
 
 function conditionsSatisfied(action, actions) {
+  
   var satisfied = true;
   // verify if conditions in action are methodName(params) {
   //   example action: {
@@ -146,6 +147,7 @@ function conditionsSatisfied(action, actions) {
   // , "result": "" // for example OK, 0, 42, true
   // , "conditions": [{ "action": "EnrichTweetWithDetails", "status": "complete", "result": "OK" }]
   for (i = 0; i < action.conditions.length; i++) {
+    console.log("i=" + i + " length = " + action.conditions.length);
     var condition = action.conditions[i];
     if (!actionWithIdHasStatusAndResult(actions, condition.action, condition.status, condition.result)) {
       satisfied = false;

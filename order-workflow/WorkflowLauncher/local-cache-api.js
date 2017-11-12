@@ -15,8 +15,8 @@ var APP_NAME = "WorkflowLauncher"
 var redisHost = process.env.REDIS_HOST || "192.168.99.100";
 var redisPort = process.env.REDIS_PORT || 30159;
 
-var cacheInspectorServiceHost = "192.168.99.100";
-var cacheInspectorServicePort = "32507";
+var cacheInspectorServiceHost = "192.168.99.104";
+var cacheInspectorServicePort = "30297";
 
 var callViaAPI = false;
 
@@ -49,8 +49,16 @@ localCacheAPI.getFromCache = function (key, callback) {
                     var body = Buffer.concat(chunks);
 
                     console.log(body.toString());
-                    callback(JSON.parse(body));
-                });
+                    try {
+                        var obj = JSON.parse(body);
+                        callback(obj);
+                    }
+                    catch (err) {
+                        console.log("failed parsing cache result under key " + key + " : " + err)
+                        console.log("failed parsing cache result: " + err)
+                        callback({});
+                    }
+                    });
             });
 
             req.end();
@@ -69,8 +77,16 @@ localCacheAPI.getFromCache = function (key, callback) {
                     console.error('ERROR in getting document from cache ' + err);
                     callback(null);
                 } else {
-                    callback(JSON.parse(reply));
-                }//else
+                    try {
+                        var obj = JSON.parse(reply);
+                        callback(obj);
+                    }
+                    catch (err) {
+                        console.log("failed parsing cache result under key " + key + " : " + err)
+                        console.log("failed parsing cache result: " + err)
+                        callback({});
+                    }
+                    }//else
             });//get
         } catch (e) {
             localLoggerAPI.log(`ERROR in accessing redis  -exception ${e}`
