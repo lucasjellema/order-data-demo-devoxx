@@ -89,7 +89,7 @@ function handleWorkflowEvent(eventMessage) {
     for (i = 0; i < event.actions.length; i++) {
       var action = event.actions[i];
       // find action of type CheckShipping
-      if ("CheckShipping" == action.type) {
+      if ("CheckOrderTotal" == action.type) {
         // check status and conditions
         if ("new" == action.status && conditionsSatisfied(action, event.actions)) {
           var workflowDocument;
