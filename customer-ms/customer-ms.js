@@ -1,3 +1,16 @@
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
+
+var mongodbHost = 'ds139791.mlab.com';
+var mongodbPort = '39791';
+var authenticate = 'mongouser:mongopass@'
+
+
+var mongodbDatabase = 'world';
+
+var mongoDBUrl = 'mongodb://' + authenticate + mongodbHost + ':' + mongodbPort + '/' + mongodbDatabase;
+
+
 console.log("NodeJS runtime version " + process.version);
 var settings = require("./proxy-settings.js");
 
@@ -21,12 +34,10 @@ var http = require('http'),
 var moduleName = "customer-ms";
 
 
-//var PORT = 5100;
-var PORT = process.env.PORT || settings.PORT;
-var ORDER_MICROSERVICE_URL = process.env.ORDER_MICROSERVICE_URL || 'https://orderms-a516817.apaas.us2.oraclecloud.com';
-var appVersion = "1.0.1";
 
-console.log(`Read from env var ORDER_MICROSERVICE_URL : ${process.env.ORDER_MICROSERVICE_URL}`)
+var PORT = process.env.PORT || settings.PORT;
+var appVersion = "1.0.2";
+
 
 var app = express();
 var server = http.createServer(app);
@@ -73,9 +84,26 @@ app.post('/customer/:customerId', function (req, res) {
 	console.log('Customer Microservice - update customer');
 	console.log('Cache-API POST params ' + JSON.stringify(req.params));
 	var customerId = req.params['customerId'];
-	console.log("customer Id " + customerId);
 	var customer = req.body;
 	customer.id = customerId;
+	console.log("customer Id " + customerId);
+	// find customer in database
+	MongoClient.connect(mongoDBUrl, function (err, db) {
+		var nameOfCollection = "customers"
+		db.collection(nameOfCollection).findAndModify(
+			{ "id": customerId }
+			, [['_id', 'asc']]  // sort order
+			, { $set: customer }
+			, {}
+			, function (err, updatedCustomer) {
+				if (err) {
+					console.log(err);
+				} else {
+					console.log("Customer updated :" + JSON.stringify(updatedCustomer));
+
+				}
+			})
+	}) //connect
 	eventBusPublisher.publishEvent("CustomerModified", {
 		"eventType": "CustomerModified"
 		, "customer": customer
@@ -91,6 +119,25 @@ app.post('/customer/:customerId', function (req, res) {
 
 })
 
+
+app.put('/customer', function (req, res) {
+	console.log('Customer Microservice - create or update customer');
+	console.log('Cache-API POST params ' + JSON.stringify(req.params));
+	var customer = req.body;
+	console.log("customer = " + JSON.stringify(customer))
+
+	MongoClient.connect(mongoDBUrl, function (err, db) {
+		var nameOfCollection = "customers"
+		db.collection(nameOfCollection).insertMany([customer], function (err, r) {
+			console.log(r.insertedCount + "customers created into collection " + nameOfCollection);
+			res.statusCode = 200;
+			res.setHeader('Content-Type', 'application/json');
+			res.setHeader('MyReply', 'Create or Updated the Customer ');
+			res.send(customer);
+		})//insertMany
+	}//connect
+	)
+})
 
 app.get('/about', function (req, res) {
 	logger.log("About requested ", moduleName, logger.DEBUG);
