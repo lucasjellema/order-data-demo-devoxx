@@ -9,7 +9,7 @@ var eventBusConsumer = require("./EventConsumer.js");
 
 
 var workflowEventsTopic = "workflowEvents";
-var PORT = process.env.APP_PORT || 8091;
+var PORT = process.env.APP_PORT || 8128;
 var APP_VERSION = "0.8.2"
 var APP_NAME = "OrderArbiter"
 
@@ -47,6 +47,16 @@ function judgeOrder(order) {
   outcome.motivation = "judged";
   var valid = true;
   var reason = "Not OK because:";
+
+  // publish the OrderApproved or OrderRejected event
+    event = {};
+    event.eventType = 'OrderApproved';
+    event.order = order;
+    
+    // publish event
+      eventBusPublisher.publishEvent('OrderApproved' + event.updateTimeStamp, event, workflowEventsTopic);
+    
+
 
   if (!valid) {
     outcome.result = "NOK";

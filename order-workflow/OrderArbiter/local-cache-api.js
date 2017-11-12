@@ -9,11 +9,11 @@ var moduleName = "accs.localCacheAPI";
 var moduleVersion = "0.8.7";
 var Redis = require("redis");
 
-var redisHost = process.env.REDIS_HOST || "192.168.99.100";
-var redisPort = process.env.REDIS_PORT || 30159;
+var redisHost = process.env.REDIS_HOST || "192.168.99.104";
+var redisPort = process.env.REDIS_PORT || 30297;
 
-var cacheInspectorServiceHost = "192.168.99.100";
-var cacheInspectorServicePort = "30159";
+var cacheInspectorServiceHost = "192.168.99.104";
+var cacheInspectorServicePort = "30297";
 
 var callViaAPI = false;
 
