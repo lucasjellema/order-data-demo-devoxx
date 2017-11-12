@@ -9,7 +9,7 @@ spec:
     # The port that this service should serve on.
     - port: 8134
       # port listened at inside the container
-      targetPort: 81034
+      targetPort: 8134
   # Label keys and values that must match in order to receive traffic for this service.
   selector:
     app: checkshipping-ms
