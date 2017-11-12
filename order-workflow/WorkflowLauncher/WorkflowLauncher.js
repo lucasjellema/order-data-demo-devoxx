@@ -27,14 +27,21 @@ setTimeout(() => {
 // Routingslip is based on the workflow template retrieved from the cache
 function handleWorkflowEvent(eventMessage) {
   try {
+    localLoggerAPI.log(`Handle wfevent`
+    , APP_NAME, "debug")
     var event = JSON.parse(eventMessage.value);
+    localLoggerAPI.log(`Parsed wfevent`
+    , APP_NAME, "debug")
     console.log("received message", eventMessage);
     if ("NewOrder" == event.eventType) {
-      console.log("A new tweet event has reached us. Time to act and publish a corresponding workflow event");
-      try {
+      localLoggerAPI.log(`NewOrder event was found and a new workflow will be started `
+      , APP_NAME, "debug")
+        try {
         localCacheAPI.getFromCache(workflowTemplateCacheKey, function (value) {
 
-
+          localLoggerAPI.log(`Retrieved workflow template under key ${workflowTemplateCacheKe} from cache ${value}`
+          , APP_NAME, "debug")
+      
           console.log("Workflow template retrieved from cache under key " + workflowTemplateCacheKey);
           // use either the template retrieved from the cache of the default template if the cache retrieval failed
           var message = (value.workflowType) ? value : defaultMessage;
