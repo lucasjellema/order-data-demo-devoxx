@@ -63,6 +63,15 @@ function checkOrderTotal(order) {
   var valid = true;
   var reason = "Not OK because:";
   console.log("check order total" + JSON.stringify(order));
+  console.log("check shiping" + JSON.stringify(order));
+  var total =0;
+  for (i=0;i<order.items.length;i++){
+    total = total + order.items[i].total;
+  }
+  if (total > 10000) {
+    valid = false;
+    reason = "Not OK because: we do not allow order totals of more than $10000";
+  }
 
   if (!valid) {
     outcome.result = "NOK";
