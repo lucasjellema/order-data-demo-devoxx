@@ -53,7 +53,7 @@ eventBusListener.subscribeToEvents(
 function updateOrderStatus( orderId, status) {
   console.log(`An order will  be  updated ${orderId} to status ${status}`);
   console.log('insertOrderIntoDatabase');
-  handleDatabaseOperation(req, res, function (request, response, connection) {
+  handleDatabaseOperation("req", "res", function (request, response, connection) {
 
     var bindvars = [status, orderId];
 
