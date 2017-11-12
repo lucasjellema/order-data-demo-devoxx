@@ -64,11 +64,11 @@ function handleWorkflowEvent(eventMessage) {
         // check status and conditions
         if ("new" == action.status && conditionsSatisfied(action, event.actions)) {
           var workflowDocument;
-          localCacheAPI.getFromCache(event.workflowConversationIdentifier, function (document) {
-            console.log("Workflow document retrieved from cache");
-            var workflowDocument = document;
-            // this happens  asynchronously; right now we do not actually use the retrieved document. It does work.       
-          });
+          // localCacheAPI.getFromCache(event.workflowConversationIdentifier, function (document) {
+          //   console.log("Workflow document retrieved from cache");
+          //   var workflowDocument = document;
+          //   // this happens  asynchronously; right now we do not actually use the retrieved document. It does work.       
+          // });
           // if satisfied, then arbitrate order
           var outcome = {};
           outcome.result = "OK";

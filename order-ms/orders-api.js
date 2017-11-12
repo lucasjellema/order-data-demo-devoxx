@@ -84,7 +84,7 @@ function updateCustomerDetailsInOrders( customerId, customer) {
       }//else
     }); //callback for handleDatabaseOperation
   });//handleDatabaseOperation 
-// updateCustomerDetailsInOrders}
+}// updateCustomerDetailsInOrders}
 
 function updateOrderStatus( orderId, status) {
   console.log(`An order will  be  updated ${orderId} to status ${status}`);
@@ -114,7 +114,7 @@ function updateOrderStatus( orderId, status) {
       }//else
     }); //callback for handleDatabaseOperation
   });//handleDatabaseOperation
-}
+}//updateOrderStatus
 
 ordersAPI.registerListeners =
   function (app) {

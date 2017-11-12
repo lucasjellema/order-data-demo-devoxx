@@ -26,6 +26,8 @@ setTimeout(() => {
 // consume local workflowEvents from Kafka and produce RoutingSlip events for new workflow instances triggered by these events
 // Routingslip is based on the workflow template retrieved from the cache
 function handleWorkflowEvent(eventMessage) {
+  console.log(`Received event: `);
+  console.log(`Received event: ${eventMessage}`);
   try {
     localLoggerAPI.log(`Handle wfevent`
       , APP_NAME, "debug")
@@ -59,15 +61,19 @@ function handleWorkflowEvent(eventMessage) {
           localLoggerAPI.log("Initialized new workflow DevoxxOrderProcessor triggered by NewOrder Event; stored workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + " - (workflowConversationIdentifier:"
             + message.workflowConversationIdentifier + "; slip is based on workflow template " + message.workflowType + " version " + message.workflowVersion + ")"
             , APP_NAME, "info");
+            console.log("pubbed event");
         }, 2500)
 
         // PUT Workflow Event in Cache under workflow event identifier
-        localCacheAPI.putInCache(message.workflowConversationIdentifier, message,
-          function (result) {
-            console.log("store workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result));
-            localLoggerAPI.log("stored workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result)
-              , APP_NAME, "debug");
-          });
+        console.log("put in cache with key "+message.workflowConversationIdentifier);
+        console.log("put in cache "+JSON.stringify(message));
+        
+        // localCacheAPI.putInCache(message.workflowConversationIdentifier, message,
+        //   function (result) {
+        //     console.log("store workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result));
+        //     localLoggerAPI.log("stored workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result)
+        //       , APP_NAME, "debug");
+        //   });
 
         //      }) //getFromCache
       } catch (err) {

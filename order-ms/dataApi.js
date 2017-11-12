@@ -3,7 +3,7 @@ var express = require('express')
   
 var fs = require('fs');
 // not available locally, only on ACCS 
-var oracledb = require('oracledb');
+//var oracledb = require('oracledb');
 var bodyParser = require('body-parser') // npm install body-parser
 var utils = require( "./proxy-utils.js" );
 var ordersAPI = require( "./orders-api.js" );
