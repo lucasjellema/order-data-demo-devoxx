@@ -37,14 +37,14 @@ function handleWorkflowEvent(eventMessage) {
       localLoggerAPI.log(`NewOrder event was found and a new workflow will be started `
       , APP_NAME, "debug")
         try {
-        localCacheAPI.getFromCache(workflowTemplateCacheKey, function (value) {
+      //  localCacheAPI.getFromCache(workflowTemplateCacheKey, function (value) {
 
-          localLoggerAPI.log(`Retrieved workflow template under key ${workflowTemplateCacheKe} from cache ${value}`
-          , APP_NAME, "debug")
+        //  localLoggerAPI.log(`Retrieved workflow template under key ${workflowTemplateCacheKe} from cache ${value}`
+          //, APP_NAME, "debug")
       
-          console.log("Workflow template retrieved from cache under key " + workflowTemplateCacheKey);
+//          console.log("Workflow template retrieved from cache under key " + workflowTemplateCacheKey);
           // use either the template retrieved from the cache of the default template if the cache retrieval failed
-          var message = (value.workflowType) ? value : defaultMessage;
+          var message = defaultWorkflowTemplate; //  (value.workflowType) ? value : defaultMessage;
           message.payload = event.order;
           message.workflowConversationIdentifier = "DevoxxOrderProcessor" + new Date().getTime();
           message.audit.push({ "when": new Date().getTime(), "who": "WorkflowLauncher", "what": "creation", "comment": "initial creation of workflow" })
@@ -63,8 +63,11 @@ function handleWorkflowEvent(eventMessage) {
           localCacheAPI.putInCache(message.workflowConversationIdentifier, message,
             function (result) {
               console.log("store workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result));
-            });
-        }) //getFromCache
+              localLoggerAPI.log("stored workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result)
+              , APP_NAME, "debug");
+      });
+
+  //      }) //getFromCache
       } catch (err) {
         localLoggerAPI.log("Exception when getting workflow template from cache " + err
           , APP_NAME, "error");
@@ -79,7 +82,7 @@ function handleWorkflowEvent(eventMessage) {
 
 }// handleWorkflowEvent
 
-var defaultMessage =
+var defaultWorkflowTemplate =
   {
     "workflowType": "devoxx-order-processor"
     , "workflowVersion": "0.9"
@@ -97,7 +100,7 @@ var defaultMessage =
       , "type": "CheckOrderTotal"
       , "status": "new"  // new, inprogress, complete, failed
       , "result": "" // for example OK, 0, 42, true
-      , "conditions": [{ "action": "CheckShippingDestination", "status": "complete", "result": "OK" }]
+      , "conditions": []
     }
     , {
       "id": "OrderApprover"
