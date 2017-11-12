@@ -31,13 +31,56 @@ eventBusListener.subscribeToEvents(
   (message) => {
     console.log("Received event from event hub");
     try {
-    var orderEvent = JSON.parse(message);
-    console.log("Order Event payload " + JSON.stringify(orderEvent));
+    var event = JSON.parse(message);
+    if (event.eventType=="NewOrder") {
+      console.log("It's a new order event ");
+    }
+    if (event.eventType=="OrderApproved") {
+      console.log(`An order has been approved and should now be updated ${event.order.id}`);
+      updateOrderStatus( event.order.id, 'APPROVED')
+    }
+    if (event.eventType=="OrderRejected") {
+      console.log(`An order has been rejected and should now be updated ${event.order.id}`);
+      updateOrderStatus( event.order.id, 'REJECTED')
+    }
+    console.log("Event payload " + JSON.stringify(event));
     } catch (err) {
       console.log("Parsing event failed "+err);
     }
   }
 );
+
+function updateOrderStatus( orderId, status) {
+  console.log(`An order will  be  updated ${orderId} to status ${status}`);
+  console.log('insertOrderIntoDatabase');
+  handleDatabaseOperation(req, res, function (request, response, connection) {
+
+    var bindvars = [status, orderId];
+
+    var updateStatement = `update dvx_orders set status = :status where id = :id`
+      ;
+    console.log('do updateStatement ' + updateStatement);
+    console.log('bind vars' + JSON.stringify(bindvars));
+    connection.execute(updateStatement, bindvars, function (err, result) {
+      if (err) {
+        console.error('error in updateOrderStatus ' + err.message);
+        doRelease(connection);
+        callback(request, response, order, { "summary": "Update failed", "error": err.message, "details": err });
+      }
+      else {
+        console.log("Rows inserted: " + JSON.stringify(result));
+
+        connection.commit(function (error) {
+          console.log(`After commit - error = ${error}`);
+          doRelease(connection);
+          callback(request, response, order, { "summary": "Update Status succeeded", "details": result });
+        });
+      }//else
+    }); //callback for handleDatabaseOperation
+  });//handleDatabaseOperation
+
+  
+}
 
 ordersAPI.registerListeners =
   function (app) {
@@ -217,7 +260,6 @@ getOrdersFromDBTable = function (req, res) {
 }//getOrdersFromDBTable
 
 insertOrderIntoDatabase = function (order, req, res, callback) {
-  var orderIdentifier = parseInt(req.params.orderId);
   console.log('insertOrderIntoDatabase');
   handleDatabaseOperation(req, res, function (request, response, connection) {
 
@@ -285,35 +327,10 @@ getOrdersFromDBAPI = function (req, res) {
 } //getordersFromDBAPI
 
 
-/* API design:
-
-{"id":1,"name":"The Boss","job":"Boss","hiredate":"2011-04-01","salary":100000,"commission":35000
-, "manager":{"id":1,"name":"The Boss","job":"Boss","votes":0}
-,"subordinates":[{"id":2,"name":"His Righthand","job":"Hand of the Boss"},{"id":3,"name":"First order","job":"Clerk"}]
-,"department":{"id":100,"name":"Management","location":"Penthouse"}}
-
-from DB:
-{"id":"7782","name":"CLARK","job":"MANAGER","department_name":"Accounting","department_location":"New York","department_id":"10","salary":"2450"
-,"commission":"","hiredate":"1981-06-09"
-,"manager":{"id":"7839","name":"KING","job":"PRESIDENT"}
-,"staff":[{"id":"7934","name":"MILLER","job":"CLERK"}]
-}
-*/
-
-transformEmp = function (emp) {
-  var e = {
-    "id": parseInt(emp.id), "name": emp.name, "job": capitalize(emp.job), "hiredate": emp.hiredate
-    , "salary": parseInt(emp.salary), "commission": parseInt(emp.commission)
-    , "manager": (emp.manager && emp.manager.id ? { "id": parseInt(emp.manager.id), "name": emp.manager.name, "job": emp.manager.job } : {})
-    , "subordinates": emp.staff.map(function (e) { var s = {}; s.id = parseInt(e.id); s.job = capitalize(e.job); s.name = e.name; return s; })
-    , "department": { "id": parseInt(emp.department_id), "name": emp.department_name, "location": emp.department_location }
-  };
-  return e;
-}
 
 
 getOrderFromDBAPI = function (req, res) {
-  var orderIdentifier = parseInt(req.params.orderId);
+  var orderIdentifier =req.params.orderId;
   console.log('getOrderFromDBAPI');
   handleDatabaseOperation(req, res, function (request, response, connection) {
 
