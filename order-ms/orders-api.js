@@ -43,12 +43,48 @@ eventBusListener.subscribeToEvents(
       console.log(`An order has been rejected and should now be updated ${event.order.id}`);
       updateOrderStatus( event.order.id, 'REJECTED')
     }
+    if (event.eventType=="CustomerModified") {
+      console.log(`Details for a customer have been modified and the bounded context for order should be updated accordingly ${event.customer.id}`);
+      updateCustomerDetailsInOrders( event.customer.id, event.customer)
+    }
     console.log("Event payload " + JSON.stringify(event));
     } catch (err) {
       console.log("Parsing event failed "+err);
     }
   }
 );
+
+
+
+function updateCustomerDetailsInOrders( customerId, customer) {
+  console.log(`All orders for cusyomer ${customerId} will  be  updated to new customer name ${customer.name} `);
+  console.log('updateCustomerDetailsInOrders');
+  handleDatabaseOperation("req", "res", function (request, response, connection) {
+
+    var bindvars = [customer.name, customerId];
+
+    var updateStatement = `update dvx_orders set customer_name = :customerName where customer_id = :customerId`
+      ;
+    console.log('do updateStatement ' + updateStatement);
+    console.log('bind vars' + JSON.stringify(bindvars));
+    connection.execute(updateStatement, bindvars, function (err, result) {
+      if (err) {
+        console.error('error in updateCustomerDetailsInOrders ' + err.message);
+        doRelease(connection);
+        callback(request, response, order, { "summary": "Update failed", "error": err.message, "details": err });
+      }
+      else {
+        console.log("Rows result: " + JSON.stringify(result));
+
+        connection.commit(function (error) {
+          console.log(`After commit - error = ${error}`);
+          doRelease(connection);
+          // there is no callback:  callback(request, response, order, { "summary": "Update Status succeeded", "details": result });
+        });
+      }//else
+    }); //callback for handleDatabaseOperation
+  });//handleDatabaseOperation 
+// updateCustomerDetailsInOrders}
 
 function updateOrderStatus( orderId, status) {
   console.log(`An order will  be  updated ${orderId} to status ${status}`);
@@ -78,8 +114,6 @@ function updateOrderStatus( orderId, status) {
       }//else
     }); //callback for handleDatabaseOperation
   });//handleDatabaseOperation
-
-  
 }
 
 ordersAPI.registerListeners =
@@ -170,7 +204,6 @@ handleAbout = function (req, res) {
   res.write("orders-API - About - Version " + APP_VERSION + ". ");
   res.write("Supported URLs:");
   res.write("/orders-api/orders");
-  res.write("/orders-api/orders/id (e.g. /orders-api/orders/7634)");
   res.write("incoming headers" + JSON.stringify(req.headers));
   res.end();
 }
@@ -190,25 +223,8 @@ function addToLogFile(logEntry) {
 }
 
 
-/* API Design:
-[{"id":1,"name":"The Boss","job":"Boss"},{"id":2,"name":"His Righthand","job":"Hand of the Boss"},{"id":3,"name":"First order","job":"Clerk"}]
-
-result from Database:
-[{"id":"7369","name":"SMITH","job":"CLERK"}
-,{"id":"7499","name":"ALLEN","job":"SALESMAN"},{"id":"7521","name":"WARD","job":"SALESMAN"},{"id":"7566","name":"JONES","job":"MANAGER"},{"id":"7654","name":"MARTIN","job":"SALESMAN"},{"id":"7782","name":"CLARK","job":"MANAGER"},{"id":"7788","name":"SCOTT","job":"ANALYST"},{"id":"7839","name":"KING","job":"PRESIDENT"},{"id":"7844","name":"TURNER","job":"SALESMAN"},{"id":"7876","name":"ADAMS","job":"CLERK"},{"id":"7900","name":"JAMES","job":"CLERK"},{"id":"7902","name":"FORD","job":"ANALYST"},{"id":"7934","name":"MILLER","job":"CLERK"}]
-
-id is String in Database and Number in API design
-Job is initcapped in API Design
-
- 
-
-*/
 capitalize = function (s) {
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-}
-
-transformEmps = function (emps) {
-  return emps.map(function (e) { e.id = parseInt(e.id); e.job = capitalize(e.job); e.votes = parseInt(e.votes); return e; })
 }
 
 transformOrders = function (orders) {
@@ -295,126 +311,6 @@ insertOrderIntoDatabase = function (order, req, res, callback) {
 } //insertOrderIntoDatabase
 
 
-
-getOrdersFromDBAPI = function (req, res) {
-  console.log('getordersFromDBAPI');
-  handleDatabaseOperation(req, res, function (request, response, connection) {
-
-    var bindvars = { orders: { dir: oracledb.BIND_OUT, type: oracledb.STRING, maxSize: 4000 } };
-    var plsqlStatement = "begin :orders := order_json_api.get_orders_json; end;";
-    console.log('do plsqlstatement ' + plsqlStatement);
-    connection.execute(plsqlStatement, bindvars, function (err, result) {
-      if (err) {
-        console.error('error in get_last_modified ' + err.message);
-        doRelease(connection);
-      }
-      else {
-        console.log('return result ' + JSON.stringify(result));
-        var orders = result.outBinds.orders;
-        doRelease(connection);
-        var emps = JSON.parse(orders);
-        console.log('return orders' + JSON.stringify(orders));
-        console.log('return emps' + JSON.stringify(emps));
-        console.log('name first emp to verify success' + emps[1].name);
-        emps = transformEmps(emps);
-        console.log('return transformed emps' + JSON.stringify(emps));
-        // need to transform emps to proper format
-        response.writeHead(200, { 'Content-Type': 'application/json' });
-        response.end(JSON.stringify(emps));
-      }//else
-    }); //callback for handleDatabaseOperation
-  });//handleDatabaseOperation
-} //getordersFromDBAPI
-
-
-
-
-getOrderFromDBAPI = function (req, res) {
-  var orderIdentifier =req.params.orderId;
-  console.log('getOrderFromDBAPI');
-  handleDatabaseOperation(req, res, function (request, response, connection) {
-
-    var bindvars = {
-      order: { dir: oracledb.BIND_OUT, type: oracledb.STRING, maxSize: 4000 }
-      , orderId: { val: orderIdentifier, dir: oracledb.BIND_IN, type: oracledb.NUMBER }
-    };
-    var plsqlStatement = "begin :order := order_json_api.get_order_json(p_id => :orderId); end;";
-    console.log('do plsqlstatement ' + plsqlStatement);
-    connection.execute(plsqlStatement, bindvars, function (err, result) {
-      if (err) {
-        console.error('error in getOrderFromDBAPI ' + err.message);
-        doRelease(connection);
-      }
-      else {
-        console.log('return result ' + JSON.stringify(result));
-        var order = result.outBinds.order;
-        doRelease(connection);
-        var emp = JSON.parse(order);
-        console.log('return order' + JSON.stringify(order));
-        console.log('return emp' + JSON.stringify(emp));
-        console.log('name  emp to verify success' + emp.name);
-
-        if (emp && emp.id) {
-          // need to transform emps to proper format
-          emp = transformEmp(emp);
-          console.log('return transformed emp' + JSON.stringify(emp));
-          response.writeHead(200, { 'Content-Type': 'application/json' });
-          response.end(JSON.stringify(emp));
-        } else {
-          response.status(404)        // HTTP status 404: NotFound
-            .send('order Not found');
-        } // no data found     
-      }//else
-    }); //callback for handleDatabaseOperation
-  });//handleDatabaseOperation
-} //getOrderFromDBAPI
-
-
-// this implementation requires Promise support
-//  The native Promise implementation is used in Node 0.12 and greater. Promise support is not enabled by default in Node 0.10.
-getOrderFromDBAPIWithPromise = function (req, res) {
-  var orderIdentifier = parseInt(req.params.orderId);
-  var connectString;
-
-  oracledb.getConnection({
-    user: process.env.DBAAS_USER_NAME,
-    password: process.env.DBAAS_USER_PASSWORD,
-    connectString: connectString
-  })
-    .then(function (conn) {
-      var bindvars = {
-        order: { dir: oracledb.BIND_OUT, type: oracledb.STRING, maxSize: 4000 }
-        , orderId: { val: orderIdentifier, dir: oracledb.BIND_IN, type: oracledb.NUMBER }
-      };
-      var plsqlStatement = "begin :order := order_json_api.get_order_json(p_id => :orderId); end;";
-      return conn.execute(
-        plsqlStatement,
-        bindvars
-      )
-        .then(function (result) {
-          var order = result.outBinds.order;
-          var emp = JSON.parse(order);
-          if (emp && emp.id) {
-            emp = transformEmp(emp); // need to transform emps to proper format
-            response.json(emp); // return transformed object as application/json
-          } else {
-            response.status(404)        // HTTP status 404: NotFound
-              .send('order Not found');
-          } // no data found     
-          return conn.close();
-        })
-        .catch(function (err) {
-          console.error(err); // todo: add better error handling!
-          return conn.close();
-        });
-    })
-    .catch(function (err) {
-      console.error(err); // todo: add better error handling!
-    });
-} //getOrderFromDBAPI
-
-
-
 function handleDatabaseOperation(request, response, callback) {
   //connectString : process.env.NODE_ORACLEDB_CONNECTIONSTRING || "140.86.4.91:1521/demos.lucasjellema.oraclecloud.internal",
   // var connectString = process.env.DBAAS_DEFAULT_CONNECT_DESCRIPTOR.replace("PDB1", "demos");
@@ -448,7 +344,7 @@ function doRelease(connection) {
     function (err) {
       if (err) {
         console.error(err.message);
-      }
+      } else  console.error("DB connection was released");
     });
 }
 
