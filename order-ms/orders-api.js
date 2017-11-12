@@ -73,7 +73,7 @@ function updateOrderStatus( orderId, status) {
         connection.commit(function (error) {
           console.log(`After commit - error = ${error}`);
           doRelease(connection);
-          callback(request, response, order, { "summary": "Update Status succeeded", "details": result });
+          // there is no callback:  callback(request, response, order, { "summary": "Update Status succeeded", "details": result });
         });
       }//else
     }); //callback for handleDatabaseOperation
