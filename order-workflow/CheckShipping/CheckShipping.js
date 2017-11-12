@@ -109,7 +109,7 @@ function handleWorkflowEvent(eventMessage) {
           action.result = outcome.result;
           // add audit line
           event.audit.push(
-            { "when": new Date().getTime(), "who": "CheckShipping", "what": "update", "comment": "Shipping Check Complete" }
+            { "when": new Date().getTime(), "who": "CheckShipping", "what": "update", "comment": "Shipping Check Complete"+ JSON.stringify(outcome) }
           );
 
           acted = true;

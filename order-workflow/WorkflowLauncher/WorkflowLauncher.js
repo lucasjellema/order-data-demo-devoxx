@@ -28,28 +28,30 @@ setTimeout(() => {
 function handleWorkflowEvent(eventMessage) {
   try {
     localLoggerAPI.log(`Handle wfevent`
-    , APP_NAME, "debug")
+      , APP_NAME, "debug")
     var event = JSON.parse(eventMessage.value);
     localLoggerAPI.log(`Parsed wfevent`
-    , APP_NAME, "debug")
+      , APP_NAME, "debug")
     console.log("received message", eventMessage);
     if ("NewOrder" == event.eventType) {
       localLoggerAPI.log(`NewOrder event was found and a new workflow will be started `
-      , APP_NAME, "debug")
-        try {
-      //  localCacheAPI.getFromCache(workflowTemplateCacheKey, function (value) {
+        , APP_NAME, "debug")
+      try {
+        //  localCacheAPI.getFromCache(workflowTemplateCacheKey, function (value) {
 
         //  localLoggerAPI.log(`Retrieved workflow template under key ${workflowTemplateCacheKe} from cache ${value}`
-          //, APP_NAME, "debug")
-      
-//          console.log("Workflow template retrieved from cache under key " + workflowTemplateCacheKey);
-          // use either the template retrieved from the cache of the default template if the cache retrieval failed
-          var message = defaultWorkflowTemplate; //  (value.workflowType) ? value : defaultMessage;
-          message.payload = event.order;
-          message.workflowConversationIdentifier = "DevoxxOrderProcessor" + new Date().getTime();
-          message.audit.push({ "when": new Date().getTime(), "who": "WorkflowLauncher", "what": "creation", "comment": "initial creation of workflow" })
-          message.creationTimeStamp = new Date().getTime()
-          message.creator = "WorkflowLauncher";
+        //, APP_NAME, "debug")
+
+        //          console.log("Workflow template retrieved from cache under key " + workflowTemplateCacheKey);
+        // use either the template retrieved from the cache of the default template if the cache retrieval failed
+        var message = defaultWorkflowTemplate; //  (value.workflowType) ? value : defaultMessage;
+        message.payload = event.order;
+        message.workflowConversationIdentifier = "DevoxxOrderProcessor" + new Date().getTime();
+        message.audit.push({ "when": new Date().getTime(), "who": "WorkflowLauncher", "what": "creation", "comment": "initial creation of workflow" })
+        message.creationTimeStamp = new Date().getTime()
+        message.creator = "WorkflowLauncher";
+        // build in a little delay for pulishing the workflow routing slip.
+        setTimeout(() => {
           eventBusPublisher.publishEvent(message.workflowConversationIdentifier, message, workflowEventsTopic);
 
           localLoggerAPI.log("Initialized new workflow  for Order " + message.payload.id + " by " + message.payload.customerName + " - (workflowConversationIdentifier:" + message.workflowConversationIdentifier + ")"
@@ -57,17 +59,17 @@ function handleWorkflowEvent(eventMessage) {
           localLoggerAPI.log("Initialized new workflow DevoxxOrderProcessor triggered by NewOrder Event; stored workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + " - (workflowConversationIdentifier:"
             + message.workflowConversationIdentifier + "; slip is based on workflow template " + message.workflowType + " version " + message.workflowVersion + ")"
             , APP_NAME, "info");
+        }, 2500)
 
-
-          // PUT Workflow Event in Cache under workflow event identifier
-          localCacheAPI.putInCache(message.workflowConversationIdentifier, message,
-            function (result) {
-              console.log("store workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result));
-              localLoggerAPI.log("stored workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result)
+        // PUT Workflow Event in Cache under workflow event identifier
+        localCacheAPI.putInCache(message.workflowConversationIdentifier, message,
+          function (result) {
+            console.log("store workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result));
+            localLoggerAPI.log("stored workflowevent plus routing slip in cache under key " + message.workflowConversationIdentifier + ": " + JSON.stringify(result)
               , APP_NAME, "debug");
-      });
+          });
 
-  //      }) //getFromCache
+        //      }) //getFromCache
       } catch (err) {
         localLoggerAPI.log("Exception when getting workflow template from cache " + err
           , APP_NAME, "error");
@@ -102,25 +104,34 @@ var defaultWorkflowTemplate =
       , "result": "" // for example OK, 0, 42, true
       , "conditions": []
     }
-    , {
+      , {
       "id": "OrderApprover"
       , "type": "OrderVerdict"
       , "status": "new"  // new, inprogress, complete, failed
       , "result": "" // for example OK, 0, 42, true
-      , "conditions": [{ "action": "CheckOrderTotal", "status": "complete", "result": "OK" }]
+      , "conditions": [{ "action": "CheckOrderTotal", "status": "complete", "result": "OK" }
+                       , { "action": "CheckShippingDestination", "status": "complete", "result": "OK" }
+                      ]
     }
     , {
-      "id": "OrderRejector"
+      "id": "OrderTotalRejector"
       , "type": "OrderVerdict"
       , "status": "new"  // new, inprogress, complete, failed
       , "result": "" // for example OK, 0, 42, true
       , "conditions": [{ "action": "CheckOrderTotal", "status": "complete", "result": "NOK" }]
+    }
+    , {
+      "id": "OrderShippingRejector"
+      , "type": "OrderVerdict"
+      , "status": "new"  // new, inprogress, complete, failed
+      , "result": "" // for example OK, 0, 42, true
+      , "conditions": [{ "action": "CheckShippingDestination", "status": "complete", "result": "NOK" }]
     }
     ]
     , "audit": [
       { "when": new Date().getTime(), "who": "WorkflowLauncher", "what": "creation", "comment": "initial creation of workflow" }
     ]
     , "payload": {
-}
+    }
   };
 
