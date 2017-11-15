@@ -23,7 +23,7 @@ var moduleName = "shoppingcart-ms";
 //var PORT = 5100;
 var PORT = process.env.PORT || settings.PORT;
 var ORDER_MICROSERVICE_URL = process.env.ORDER_MICROSERVICE_URL || 'https://orderms-a516817.apaas.us2.oraclecloud.com';
-var appVersion = "0.9.9";
+var appVersion = "1.0.1";
 
 console.log(`Read from env var ORDER_MICROSERVICE_URL : ${process.env.ORDER_MICROSERVICE_URL}`)
 
@@ -75,7 +75,12 @@ app.post('/cart/:cartId', function (req, res) {
 	console.log("cart value submitted in POST to be stored in Cache" + valString);
 	cacheAPI.putInCache(cartId, valString, function (response) {
 		// Send the response
-		res.json(response).end();
+		response.cartId = cartId;
+		response.cart = cart;
+		res.statusCode = 200;
+		res.setHeader('Content-Type', 'application/json');
+		res.setHeader('MyReply', 'Updated the Shopping Cart - with cart id ' + cartId);
+		res.send(response);
 	}
 	)
 })
@@ -92,8 +97,13 @@ app.post('/cart', function (req, res) {
 	console.log("cart value submitted in POST to be stored in Cache" + valString);
 	cacheAPI.putInCache(cartId, valString, function (response) {
 		// Send the response
-		res.json(response).end();
-	}
+		response.cartId = cartId;
+		response.cart = cart;
+		res.statusCode = 200;
+		res.setHeader('Content-Type', 'application/json');
+		res.setHeader('MyReply', 'Created the Shopping Cart - with cart id ' + cartId);
+		res.send(response);
+}
 	)
 })
 

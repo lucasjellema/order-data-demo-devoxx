@@ -64,6 +64,35 @@ app.use(function (request, response, next) {
 });
 console.log("Registering Submodules ");
 
+
+app.get('/customer', function (req, res) {
+	// Get the key and value
+	console.log('Customer Microservice - retrieve all customers');
+	// find customer in database
+	MongoClient.connect(mongoDBUrl, function (err, db) {
+		var nameOfCollection = "customers"
+		db.collection(nameOfCollection).find(
+			 function (err, customersCursor) {
+				 console.log("found customers")
+				if (err) {
+					console.log(err);
+				} else {
+					// for each cursor element, add a customer to the result
+					customers = {"customers": []};
+					customersCursor.toArray(function (err, cmrs)   { 
+						customers.customers = cmrs;
+						res.statusCode = 200;
+						res.setHeader('Content-Type', 'application/json');
+						res.setHeader('MyReply', 'retrieved all customers');
+						res.send( customers);
+						});
+				}
+			})
+	}) //connect
+
+
+})
+
 app.get('/customer/:customerId', function (req, res) {
 	// Get the key and value
 	console.log('Customer Microservice - retrieve customer');

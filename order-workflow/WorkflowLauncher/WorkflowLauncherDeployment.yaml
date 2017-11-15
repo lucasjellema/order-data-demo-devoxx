@@ -5,7 +5,7 @@ metadata:
   labels:
     run: workflow-launcher
 spec:
-  replicas: 3 # tells deployment to run 3 pods matching the template
+  replicas: 1 # tells deployment to run 3 pods matching the template
   selector:
     matchLabels:
       run: workflow-launcher
@@ -25,7 +25,7 @@ spec:
         - name: GIT_URL
           value: "https://github.com/lucasjellema/order-data-demo-devoxx"
         - name: APP_PORT
-          value: "8109"
+          value: "8113"
         - name: APP_HOME
           value: "order-workflow/WorkflowLauncher"
         - name: APP_STARTUP
